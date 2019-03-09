@@ -19,6 +19,10 @@ class MapViewController: UIViewController {
     private var presenter: MapPresenter?
     private var userManager: UserManagerProtocol
     private var rentalDetailViewController: RentalDetailViewController?
+    private var idleTimer: Timer?
+    private var timeoutInSeconds: TimeInterval {
+        return 15;
+    }
     
     init(userManager: UserManagerProtocol, apiProvider: ApiProvider) {
         if userManager.currentUser == nil {
@@ -43,6 +47,7 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        resetIdleTimer()
     }
     
     func setupViews() {
@@ -73,7 +78,7 @@ class MapViewController: UIViewController {
         mapView!.delegate = self
         view.addSubview(mapView!)
         
-        // TODO: set camera to user's current location, handle location updatesß
+        // set camera to user's current location, handle location updates
         // locationManager.delegate = self
         // locationManager.desiredAccuracy = kCLLocationAccuracyBest
         // locationManager.requestLocation()
@@ -99,6 +104,36 @@ class MapViewController: UIViewController {
 
         addPullUpController(cyclePortVC, animated: true)
         addDetailController(rentalDetailVC)
+    }
+    
+    private func resetIdleTimer() {
+        if idleTimer == nil {
+            idleTimer = Timer.scheduledTimer(timeInterval: timeoutInSeconds,
+                                             target: self,
+                                             selector: #selector(MapViewController.idleTimerExceeded),
+                                             userInfo: nil,
+                                             repeats: false
+            )
+        } else {
+            // extend the timer if event happens within the time range
+            if (idleTimer?.fireDate.timeIntervalSinceNow)! < (timeoutInSeconds - 1) {
+                idleTimer?.fireDate = NSDate.init(timeIntervalSinceNow: timeoutInSeconds) as Date
+            }
+        }
+    }
+    
+    @objc private func idleTimerExceeded() {
+        presenter?.getCyclePorts(for: currentArea)
+        idleTimer?.invalidate()
+        idleTimer = nil
+        resetIdleTimer()
+    }
+    
+    override var next: UIResponder? {
+        get {
+            resetIdleTimer()
+            return super.next
+        }
     }
 }
 

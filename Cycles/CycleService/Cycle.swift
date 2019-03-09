@@ -36,7 +36,7 @@ public struct Cycle: Mappable {
         if
             let extra = extra,
             let optional = extra["cyclePort"],
-            let unwrapped = optional,let value = unwrapped as? CyclePort
+            let unwrapped = optional, let value = unwrapped as? CyclePort
         {
             cyclePort = value
         }

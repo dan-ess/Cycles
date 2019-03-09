@@ -24,7 +24,11 @@ class CyclePortMarkerView: UIView {
     var fillColor = UIColor.white
     var borderColor = UIColor.red
     var textColor = UIColor.black
-    var cycleCount = ""
+    var cycleCount = "" {
+        didSet {
+            self.label.text = cycleCount
+        }
+    }
     
     init(cycleCount: String) {
         self.cycleCount = cycleCount
