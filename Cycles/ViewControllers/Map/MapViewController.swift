@@ -122,8 +122,8 @@ class MapViewController: UIViewController {
             let rental = rentalCache.load(forKey: Caches.rental.rawValue),
             let rentalDetailViewController = self.rentalDetailViewController
         {
-                rentalDetailViewController.rental = rental
-                rentalDetailViewController.show()
+            rentalDetailViewController.rental = rental
+            rentalDetailViewController.show(animation: false)
         }
     }
 

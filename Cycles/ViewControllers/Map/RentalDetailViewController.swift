@@ -15,53 +15,49 @@ class RentalDetailViewController: UIViewController {
     var delegate: RentalDetailDelegate?
     var rental: Rental? {
         didSet {
-            cyclePort.text = rental?.cyclePort?.name
-            cycleID.text = rental?.cycle?.displayName
-            expiration.text = rental?.expirationDate.toString(dateFormat: "HH:mm:ss")
-            cyclePIN.text = rental?.pin
+            cyclePortLabel.text = rental?.cyclePort?.name
+            cycleLabel.text = "\(rental?.cycle?.displayName ?? "") / \(rental?.pin ?? "")"
+            expirationLabel.text = "until \(rental?.expirationDate.toString(dateFormat: "HH:mm:ss") ?? "")"
         }
     }
     
     private var topConstraint: NSLayoutConstraint?
 
-    private let cancelButton: UIButton = {
+    private var cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.layer.borderWidth = 0
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Cancel", for: .normal)
         return button
     }()
     
-    private let cycleID: UILabel = {
+    private let successLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Cycle reserved"
+        label.mask?.isHidden = true
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
     
-    private let cyclePort: UILabel = {
+    private let cyclePortLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .darkGray
         return label
     }()
     
-    private let cyclePIN: UILabel = {
+    private let cycleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .darkGray
         return label
     }()
     
-    private let expiration: UILabel = {
+    private let expirationLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .darkGray
+        label.textAlignment = .right
         return label
-    }()
-    
-    private let stack: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        return stackView
     }()
     
     init() {
@@ -74,18 +70,42 @@ class RentalDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.heightAnchor.constraint(equalToConstant: 100).isActive = true
         setupViews()
     }
     
     func setupViews() {
         view.backgroundColor = .white
-        view.addSubview(stack)
         
-        stack.addArrangedSubview(cyclePort)
-        stack.addArrangedSubview(cycleID)
-        stack.addArrangedSubview(cyclePIN)
-        stack.addArrangedSubview(expiration)
-        stack.addArrangedSubview(cancelButton)
+        let header = UIView()
+        view.addSubview(header)
+        view.addConstraints(format: "H:|[v0]|", views: header)
+        
+        header.addSubview(successLabel)
+        header.addSubview(expirationLabel)
+        header.addConstraints(format: "H:|-12-[v0]-[v1(80)]-15-|", views: successLabel, expirationLabel)
+        header.addConstraints(format: "V:|[v0]", views: successLabel)
+        header.addConstraints(format: "V:|[v0(24)]", views: expirationLabel)
+        
+        let body1 = UIView()
+        view.addSubview(body1)
+        view.addConstraints(format: "H:|[v0]|", views: body1)
+        
+        body1.addSubview(cyclePortLabel)
+        body1.addConstraints(format: "H:|-15-[v0]-|", views: cyclePortLabel)
+        body1.addConstraints(format: "V:|[v0]|", views: cyclePortLabel)
+        
+        let body2 = UIView()
+        view.addSubview(body2)
+        view.addConstraints(format: "H:|[v0]|", views: body2)
+        
+        body2.addSubview(cycleLabel)
+        body2.addSubview(cancelButton)
+        body2.addConstraints(format: "H:|-15-[v0][v1]-15-|", views: cycleLabel, cancelButton)
+        body2.addConstraints(format: "V:|[v0]|", views: cycleLabel)
+        body2.addConstraints(format: "V:|[v0]|", views: cancelButton)
+        
+        view.addConstraints(format: "V:|-12-[v0(26)][v1(24)][v2(24)]", views: header, body1, body2)
         
         cancelButton.addTarget(self, action: #selector(RentalDetailViewController.didTapCancel), for: .touchUpInside)
     }
@@ -93,15 +113,11 @@ class RentalDetailViewController: UIViewController {
     func setupConstraints() {
         guard let parentView = parent?.view else { return }
         
-        stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
-        stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
-        view.addConstraints(format: "H:|-20-[v0]-20-|", views: stack)
-        
-        topConstraint = view.topAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.topAnchor, constant: -130)
+        topConstraint = view.topAnchor.constraint(equalTo: parentView.safeAreaLayoutGuide.topAnchor, constant: -105)
         topConstraint?.isActive = true
         
         parentView.addConstraints(format: "H:|[v0]|", views: view)
-        view.heightAnchor.constraint(equalToConstant: 125).isActive = true
+
     }
     
     @objc private func didTapCancel(_ sender: UIButton) {
@@ -118,19 +134,21 @@ class RentalDetailViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func show() {
+    func show(animation: Bool = true) {
         guard let parentView = parent?.view else { return }
         self.topConstraint?.constant = 0
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                parentView.layoutIfNeeded()
-        })
+        if animation {
+            UIView.animate(
+                withDuration: 0.3,
+                animations: {
+                    parentView.layoutIfNeeded()
+            })
+        }
     }
     
     func hide() {
         guard let parentView = parent?.view else { return }
-        self.topConstraint?.constant = -130
+        self.topConstraint?.constant = -105
         UIView.animate(
             withDuration: 0.3,
             animations: {
