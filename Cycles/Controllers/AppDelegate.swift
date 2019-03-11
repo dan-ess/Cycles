@@ -16,15 +16,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(["ja"], forKey: "AppleLanguages")
         GMSServices.provideAPIKey(Environment.gmsApiKey)
-        
+
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = RootViewController(
             userManager: UserManager(),
-            apiProvider: ApiProvider()
+            apiProvider: ApiProvider(),
+            rentalCache: RentalCache()
         )
         window?.makeKeyAndVisible()
-        
+
         return true
     }
 
@@ -55,9 +56,8 @@ extension AppDelegate {
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
-    
+
     var rootViewController: RootViewController {
         return window!.rootViewController as! RootViewController
     }
 }
-

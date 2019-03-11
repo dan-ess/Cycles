@@ -10,10 +10,17 @@ class RootViewController: UIViewController {
     private var apiProvider: ApiProvider
     private var current: UIViewController
     private var userManager: UserManagerProtocol
+    private var rentalCache: RentalCache
     
-    init(userManager: UserManagerProtocol, apiProvider: ApiProvider) {
+    init(
+        userManager: UserManagerProtocol,
+        apiProvider: ApiProvider,
+        rentalCache: RentalCache
+    ) {
         self.apiProvider = apiProvider
         self.userManager = userManager
+        self.rentalCache = rentalCache
+        
         self.current = SplashViewController(
             userManager: userManager,
             apiProvider: apiProvider
@@ -41,7 +48,8 @@ class RootViewController: UIViewController {
         
         let mapViewController = MapViewController(
             userManager: userManager,
-            apiProvider: apiProvider
+            apiProvider: apiProvider,
+            rentalCache: rentalCache
         )
         let mainScreen = UINavigationController(rootViewController: mapViewController)
         mainScreen.navigationBar.topItem?.title = "Cycles"

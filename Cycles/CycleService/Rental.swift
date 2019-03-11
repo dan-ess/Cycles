@@ -6,7 +6,7 @@
 import Foundation
 import Kanna
 
-struct Rental: Mappable {
+struct Rental: Mappable, Codable {
     static let rental_period: Double = 20
     var cycle: Cycle?
     var cyclePort: CyclePort?

@@ -16,15 +16,18 @@ class CyclePortPresenter {
     private unowned var delegate: CyclePortDelegate
     private var apiProvider: ApiProvider
     private var userManager: UserManagerProtocol
+    private var rentalCache: RentalCache
     
     init(
         delegate: CyclePortDelegate,
         userManager: UserManagerProtocol,
-        apiProvider: ApiProvider
+        apiProvider: ApiProvider,
+        rentalCache: RentalCache
     ) {
         self.delegate = delegate
         self.apiProvider = apiProvider
         self.userManager = userManager
+        self.rentalCache = rentalCache
     }
     
     func getCycles(for cyclePort: CyclePort) {
@@ -45,7 +48,6 @@ class CyclePortPresenter {
     }
     
     func rent(cycle: Cycle) {
-        
         if let user = userManager.currentUser {
             apiProvider.rent(
                 username: user.username,
@@ -57,6 +59,13 @@ class CyclePortPresenter {
                         print("failure parsing rental!")
                         return
                     }
+
+                    do {
+                        try strongSelf.rentalCache.cache(rental, key: Caches.rental.rawValue)
+                    } catch {
+                        print("error caching rental")
+                    }
+                    
                     strongSelf.delegate.didCompleteRental(rental: rental)
                 },
                 error: { code, error in print("error!") },

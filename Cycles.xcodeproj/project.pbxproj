@@ -22,6 +22,7 @@
 		372DDCB721626A520016D1AE /* CyclePortPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372DDCB621626A520016D1AE /* CyclePortPresenter.swift */; };
 		373C59B4210E14E700222117 /* CyclePortViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373C59B3210E14E700222117 /* CyclePortViewController.swift */; };
 		373F6A5821E7A041000C2268 /* CycleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373F6A5721E7A041000C2268 /* CycleProvider.swift */; };
+		37446CA42232D01300C282F2 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37446CA32232D01300C282F2 /* Cache.swift */; };
 		3746718B21DD1EA100CFF20E /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3746718A21DD1EA100CFF20E /* Login.swift */; };
 		375006622110728300BBE786 /* CyclePort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375006612110728300BBE786 /* CyclePort.swift */; };
 		3754809F223388370078B9AE /* LoginPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3754809E223388370078B9AE /* LoginPresenterTests.swift */; };
@@ -125,6 +126,7 @@
 		372DDCB621626A520016D1AE /* CyclePortPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortPresenter.swift; sourceTree = "<group>"; };
 		373C59B3210E14E700222117 /* CyclePortViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortViewController.swift; sourceTree = "<group>"; };
 		373F6A5721E7A041000C2268 /* CycleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleProvider.swift; sourceTree = "<group>"; };
+		37446CA32232D01300C282F2 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		3746718A21DD1EA100CFF20E /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		375006612110728300BBE786 /* CyclePort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePort.swift; sourceTree = "<group>"; };
 		3754809E223388370078B9AE /* LoginPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPresenterTests.swift; sourceTree = "<group>"; };
@@ -370,6 +372,7 @@
 			children = (
 				37AB00262158C46300361692 /* UserManager.swift */,
 				37700FC22205DA5D001AA685 /* User.swift */,
+				37446CA32232D01300C282F2 /* Cache.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 				37700FF82206B6C8001AA685 /* UIView+Cycles.swift in Sources */,
 				370229F0211DDB3300A7F409 /* CycleTableViewCell.swift in Sources */,
 				373F6A5821E7A041000C2268 /* CycleProvider.swift in Sources */,
+				37446CA42232D01300C282F2 /* Cache.swift in Sources */,
 				37290403210307130068E0F8 /* MapViewController.swift in Sources */,
 				37AB001C2156771E00361692 /* LoginPresenter.swift in Sources */,
 				37A73EB7215BE6990077C5C6 /* MapPresenter.swift in Sources */,

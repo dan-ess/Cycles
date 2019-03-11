@@ -5,7 +5,7 @@
 
 import Kanna
 
-public struct Cycle: Mappable {
+public struct Cycle: Mappable, Codable {
     var displayName: String
     var cycleEntID: String
     var cycleID: String

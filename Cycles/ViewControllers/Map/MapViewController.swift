@@ -18,23 +18,32 @@ class MapViewController: UIViewController {
     private var mapView: GMSMapView?
     private var presenter: MapPresenter?
     private var userManager: UserManagerProtocol
+    private var rentalCache: Cache<Rental>
     private var rentalDetailViewController: RentalDetailViewController?
     private var idleTimer: Timer?
     private var timeoutInSeconds: TimeInterval {
         return 15;
     }
     
-    init(userManager: UserManagerProtocol, apiProvider: ApiProvider) {
+    init(
+        userManager: UserManagerProtocol,
+        apiProvider: ApiProvider,
+        rentalCache: Cache<Rental>
+    ) {
         if userManager.currentUser == nil {
             fatalError("User is nil")
         }
         self.apiProvider = apiProvider
         self.userManager = userManager
+        self.rentalCache = rentalCache
+        
         super.init(nibName: nil, bundle: nil)
+        
         self.presenter = MapPresenter(
             delegate: self,
             userManager: userManager,
-            apiProvider: apiProvider
+            apiProvider: apiProvider,
+            rentalCache: rentalCache
         )
     }
     
@@ -53,7 +62,8 @@ class MapViewController: UIViewController {
     func setupViews() {
         let cyclePortVC = CyclePortViewController(
             userManager: userManager,
-            apiProvider: apiProvider
+            apiProvider: apiProvider,
+            rentalCache: rentalCache
         )
         cyclePortVC.delegate = self
         self.cyclePortViewController = cyclePortVC
@@ -96,16 +106,27 @@ class MapViewController: UIViewController {
     @objc private func logoutUser(_ sender: UIButton) {
         AppDelegate.shared.rootViewController.switchToLoginScreen()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
-        guard let cyclePortVC = self.cyclePortViewController, let rentalDetailVC = self.rentalDetailViewController else {
+        guard
+            let cyclePortVC = self.cyclePortViewController,
+            let rentalDetailVC = self.rentalDetailViewController
+        else {
             fatalError("Could not add controllers to MapViewController")
         }
 
         addPullUpController(cyclePortVC, animated: true)
         addDetailController(rentalDetailVC)
+        
+        if
+            let rental = rentalCache.load(forKey: Caches.rental.rawValue),
+            let rentalDetailViewController = self.rentalDetailViewController
+        {
+                rentalDetailViewController.rental = rental
+                rentalDetailViewController.show()
+        }
     }
-    
+
     private func resetIdleTimer() {
         if idleTimer == nil {
             idleTimer = Timer.scheduledTimer(timeInterval: timeoutInSeconds,
@@ -115,13 +136,13 @@ class MapViewController: UIViewController {
                                              repeats: false
             )
         } else {
-            // extend the timer if event happens within the time range
+            // extend the timer if ui event happened before idle timeout reset
             if (idleTimer?.fireDate.timeIntervalSinceNow)! < (timeoutInSeconds - 1) {
                 idleTimer?.fireDate = NSDate.init(timeIntervalSinceNow: timeoutInSeconds) as Date
             }
         }
     }
-    
+
     @objc private func idleTimerExceeded() {
         presenter?.getCyclePorts(for: currentArea)
         idleTimer?.invalidate()
@@ -226,7 +247,7 @@ extension MapViewController: MapDelegate {
         marker.userData = cyclePort
         return marker
     }
-    
+
     func didUpdateCyclePorts(cyclePorts: [CyclePort]) {
         for cyclePort in cyclePorts {
             if let marker = markers[cyclePort.formName] {
@@ -240,7 +261,7 @@ extension MapViewController: MapDelegate {
             }
         }
     }
-    
+
     func didCancelRental() {
         // TODO: it's a little bit difficult to follow how this cancel is called
         // from rental detail -> map -> presenter -> here

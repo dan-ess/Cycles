@@ -5,7 +5,7 @@
 
 import Kanna
 
-public struct CyclePort: Mappable {
+public struct CyclePort: Mappable, Codable {
     var name: String
     var formName: String
     var parkingEntID: String

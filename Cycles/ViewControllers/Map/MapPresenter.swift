@@ -14,15 +14,18 @@ class MapPresenter {
     private unowned var delegate: MapDelegate
     private var apiProvider: ApiProvider
     private var userManager: UserManagerProtocol
+    private var rentalCache: RentalCache
     
     init(
         delegate: MapDelegate,
         userManager: UserManagerProtocol,
-        apiProvider: ApiProvider
+        apiProvider: ApiProvider,
+        rentalCache: RentalCache
     ) {
         self.delegate = delegate
         self.userManager = userManager
         self.apiProvider = apiProvider
+        self.rentalCache = rentalCache
     }
     
     func getCyclePorts(for area: CycleServiceArea) {
@@ -50,6 +53,8 @@ class MapPresenter {
                 success: { [weak self] in
                     guard let strongSelf = self else { return }
                     strongSelf.delegate.didCancelRental()
+                    strongSelf.rentalCache.clear(forKey: Caches.rental.rawValue)
+                    
                 },
                 error: { [weak self] (errorCode, error) in
                     // TODO: handle error
