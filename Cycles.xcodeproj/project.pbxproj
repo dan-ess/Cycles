@@ -20,6 +20,7 @@
 		3729044F2108D5E50068E0F8 /* CyclePortMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3729044E2108D5E40068E0F8 /* CyclePortMarkerView.swift */; };
 		372C92DA220F02B500173814 /* UIColor+Cycles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372C92D9220F02B500173814 /* UIColor+Cycles.swift */; };
 		372DDCB721626A520016D1AE /* CyclePortPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372DDCB621626A520016D1AE /* CyclePortPresenter.swift */; };
+		372F8425223E083800A40ADC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 372F8424223E083800A40ADC /* LaunchScreen.storyboard */; };
 		373C59B4210E14E700222117 /* CyclePortViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373C59B3210E14E700222117 /* CyclePortViewController.swift */; };
 		373F6A5821E7A041000C2268 /* CycleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373F6A5721E7A041000C2268 /* CycleProvider.swift */; };
 		37446CA42232D01300C282F2 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37446CA32232D01300C282F2 /* Cache.swift */; };
@@ -124,6 +125,7 @@
 		3729044E2108D5E40068E0F8 /* CyclePortMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortMarkerView.swift; sourceTree = "<group>"; };
 		372C92D9220F02B500173814 /* UIColor+Cycles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Cycles.swift"; sourceTree = "<group>"; };
 		372DDCB621626A520016D1AE /* CyclePortPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortPresenter.swift; sourceTree = "<group>"; };
+		372F8424223E083800A40ADC /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		373C59B3210E14E700222117 /* CyclePortViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortViewController.swift; sourceTree = "<group>"; };
 		373F6A5721E7A041000C2268 /* CycleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleProvider.swift; sourceTree = "<group>"; };
 		37446CA32232D01300C282F2 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 				37AB002021568F9900361692 /* Map */,
 				37AB00212156961200361692 /* Splash */,
 				37185210213C129A00CF099B /* RootViewController.swift */,
+				372F8424223E083800A40ADC /* LaunchScreen.storyboard */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -480,6 +483,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				372F8425223E083800A40ADC /* LaunchScreen.storyboard in Resources */,
 				37290408210307130068E0F8 /* Assets.xcassets in Resources */,
 				3729042F210450E90068E0F8 /* GoogleMaps.bundle in Resources */,
 			);
@@ -526,20 +530,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				37700FCA2205F9CF001AA685 /* Environment.swift in Sources */,
+				37185211213C129A00CF099B /* RootViewController.swift in Sources */,
+				37AB00232156962400361692 /* SplashPresenter.swift in Sources */,
 				3718520F213C100300CF099B /* LoginViewController.swift in Sources */,
 				37BFACCF212C5CB00015EB77 /* RentalDetailViewController.swift in Sources */,
 				37700FC02205A52F001AA685 /* CycleServiceArea.swift in Sources */,
 				37FC65352115FCED00088971 /* PullUpController.swift in Sources */,
-				37AB00232156962400361692 /* SplashPresenter.swift in Sources */,
 				37700FF12206B1ED001AA685 /* Response+CycleService.swift in Sources */,
 				375006622110728300BBE786 /* CyclePort.swift in Sources */,
-				37185211213C129A00CF099B /* RootViewController.swift in Sources */,
 				37185213213C139A00CF099B /* SplashViewController.swift in Sources */,
 				3729044F2108D5E50068E0F8 /* CyclePortMarkerView.swift in Sources */,
 				372DDCB721626A520016D1AE /* CyclePortPresenter.swift in Sources */,
 				37700FF82206B6C8001AA685 /* UIView+Cycles.swift in Sources */,
 				370229F0211DDB3300A7F409 /* CycleTableViewCell.swift in Sources */,
 				373F6A5821E7A041000C2268 /* CycleProvider.swift in Sources */,
+				37290401210307130068E0F8 /* AppDelegate.swift in Sources */,
 				37446CA42232D01300C282F2 /* Cache.swift in Sources */,
 				37290403210307130068E0F8 /* MapViewController.swift in Sources */,
 				37AB001C2156771E00361692 /* LoginPresenter.swift in Sources */,
@@ -549,7 +554,6 @@
 				37700FF32206B22F001AA685 /* Dictionary+CycleService.swift in Sources */,
 				37700FF52206B31B001AA685 /* Errors.swift in Sources */,
 				37E680E9211742A30071A841 /* Cycle.swift in Sources */,
-				37290401210307130068E0F8 /* AppDelegate.swift in Sources */,
 				3746718B21DD1EA100CFF20E /* Login.swift in Sources */,
 				37700FC32205DA5D001AA685 /* User.swift in Sources */,
 				37EDC39221D7D05000C80351 /* CycleService.swift in Sources */,
