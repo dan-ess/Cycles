@@ -8,21 +8,15 @@ import UIKit
 class CyclePortMarkerView: UIView {
     
     let fillLayer = CAShapeLayer()
-    let fillLayer2 = CAShapeLayer()
     let label = UILabel(frame: CGRect(x:0, y:0, width: 40, height: 40))
-    let smallCircle = UIBezierPath(
+    let circle = UIBezierPath(
         arcCenter: CGPoint(x: 20, y: 20),
-        radius: CGFloat(15), startAngle: CGFloat(0),
-        endAngle: CGFloat(Double.pi * 2),
-        clockwise: true)
-    let bigCircle = UIBezierPath(
-        arcCenter: CGPoint(x: 20, y: 20),
-        radius: CGFloat(18),
+        radius: CGFloat(14),
         startAngle: CGFloat(0),
         endAngle: CGFloat(Double.pi * 2),
-        clockwise: true)
+        clockwise: true
+    )
     var fillColor = UIColor.white
-    var borderColor = UIColor.red
     var textColor = UIColor.black
     var cycleCount = "" {
         didSet {
@@ -32,7 +26,7 @@ class CyclePortMarkerView: UIView {
     
     init(cycleCount: String) {
         self.cycleCount = cycleCount
-        super.init(frame: CGRect(x:0, y:0, width:40, height:40))
+        super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
     }
     
     override init(frame: CGRect) {
@@ -47,23 +41,26 @@ class CyclePortMarkerView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        backgroundColor = UIColor.clear
-        fillLayer.borderWidth = 3
-        fillLayer.strokeColor = UIColor.red.cgColor
+        // cycle port count marker
+        fillLayer.lineWidth = 1
+        fillLayer.strokeColor = UIColor.lightGray.cgColor
         fillLayer.fillColor = UIColor.white.cgColor
         fillLayer.fillRule = CAShapeLayerFillRule.evenOdd
-        fillLayer.path = smallCircle.cgPath
+        fillLayer.path = circle.cgPath
+        
+        // cycle port count shadow
+        fillLayer.shadowColor = UIColor.gray.cgColor
+        fillLayer.shadowOffset = CGSize(width: 0.0, height: 1.5)
+        fillLayer.shadowOpacity = 0.4
+        fillLayer.shadowRadius = 2
+        fillLayer.shouldRasterize = true
+        fillLayer.rasterizationScale = UIScreen.main.scale
+        
+        layer.rasterizationScale = UIScreen.main.scale
         layer.addSublayer(fillLayer)
         
-        fillLayer2.borderWidth = 3
-        fillLayer2.strokeColor = UIColor.red.cgColor
-        fillLayer2.fillColor = UIColor.red.cgColor
-        fillLayer2.fillRule = CAShapeLayerFillRule.evenOdd
-        fillLayer2.path = bigCircle.cgPath
-        fillLayer2.isHidden = true
-        layer.addSublayer(fillLayer2)
-        
+        // cycle port count text
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = UIColor.black
         label.backgroundColor = UIColor.clear
         label.text = self.cycleCount
@@ -72,16 +69,25 @@ class CyclePortMarkerView: UIView {
         self.addSubview(label)
     }
     
-    func select(completion: () -> Void) {
-        _select()
-        completion()
-    }
-    
-    func _select() {
-        // TODO
+    func select() {
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.fillLayer.strokeColor = UIColor.gray.cgColor
+                self.fillLayer.lineWidth = 2
+                self.layoutIfNeeded()
+            }
+        )
     }
     
     func deselect() {
-        // TODO
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.fillLayer.strokeColor = UIColor.lightGray.cgColor
+                self.fillLayer.lineWidth = 1
+                self.layoutIfNeeded()
+            }
+        )
     }
 }
