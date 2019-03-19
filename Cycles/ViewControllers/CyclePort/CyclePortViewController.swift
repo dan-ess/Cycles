@@ -126,6 +126,7 @@ class CyclePortViewController: PullUpController {
 
         cycleTableView.dataSource = self
         cycleTableView.delegate = self
+        cycleTableView.allowsSelection = false
         cycleTableView.register(CycleTableViewCell.self, forCellReuseIdentifier: "cycleCell")
 
         view.addSubview(handleView)
@@ -156,7 +157,7 @@ class CyclePortViewController: PullUpController {
         cyclePortContainer.addConstraints(format: "H:|[v0]|", views: spinner)
 
         cycleTableView.topAnchor.constraint(equalTo: cyclePortImage.bottomAnchor, constant: 20).isActive = true
-        view.addConstraints(format: "H:|-5-[v0]-25-|", views: cycleTableView)
+        view.addConstraints(format: "H:|-5-[v0]-20-|", views: cycleTableView)
         view.addConstraints(format: "V:[v0]|", views: cycleTableView)
     }
 

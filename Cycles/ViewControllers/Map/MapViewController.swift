@@ -13,17 +13,20 @@ class MapViewController: UIViewController {
     private var apiProvider: ApiProvider
     private var currentArea = CycleServiceArea.中央区
     private var cyclePortViewController: CyclePortViewController?
+    private var idleTimer: Timer?
+    private var initialLat = 35.688038
+    private var initialLon = 139.786561
     private var locationManager = CLLocationManager()
-    private var markers = MarkerDict()
     private var mapView: GMSMapView?
+    private var markers = MarkerDict()
     private var presenter: MapPresenter?
-    private var userManager: UserManagerProtocol
     private var rentalCache: Cache<Rental>
     private var rentalDetailViewController: RentalDetailViewController?
-    private var idleTimer: Timer?
+    private var selectedMarker: CyclePortMarkerView?
     private var timeoutInSeconds: TimeInterval {
         return 15;
     }
+    private var userManager: UserManagerProtocol
     
     init(
         userManager: UserManagerProtocol,
@@ -81,24 +84,29 @@ class MapViewController: UIViewController {
         navigationItem.leftBarButtonItem = logoutButton
         
         // set camera to initial location
-        let camera = GMSCameraPosition.camera(withLatitude: 35.688038, longitude: 139.786561, zoom: 16.0)
+        let camera = GMSCameraPosition.camera(
+            withLatitude: initialLat,
+            longitude: initialLon,
+            zoom: 16.0
+        )
         mapView = GMSMapView.map(withFrame: self.view.frame, camera: camera)
         mapView!.isMyLocationEnabled = true
+        mapView!.settings.myLocationButton = true
         mapView!.center = view.center
         mapView!.delegate = self
         view.addSubview(mapView!)
         
-        // set camera to user's current location, handle location updates
-        // locationManager.delegate = self
-        // locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        // locationManager.requestLocation()
+        // try to set camera to user's current location
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestLocation()
 
-        // let authorizationStatus = CLLocationManager.authorizationStatus()
-        // if (authorizationStatus == CLAuthorizationStatus.notDetermined) {
-        //   locationManager.requestWhenInUseAuthorization()
-        // } else {
-        //   locationManager.startUpdatingLocation()
-        // }
+        let authorizationStatus = CLLocationManager.authorizationStatus()
+        if (authorizationStatus == CLAuthorizationStatus.notDetermined) {
+            locationManager.requestWhenInUseAuthorization()
+        } else {
+            locationManager.requestLocation()
+        }
         
         presenter?.getCyclePorts(for: currentArea)
     }
@@ -129,11 +137,12 @@ class MapViewController: UIViewController {
 
     private func resetIdleTimer() {
         if idleTimer == nil {
-            idleTimer = Timer.scheduledTimer(timeInterval: timeoutInSeconds,
-                                             target: self,
-                                             selector: #selector(MapViewController.idleTimerExceeded),
-                                             userInfo: nil,
-                                             repeats: false
+            idleTimer = Timer.scheduledTimer(
+                timeInterval: timeoutInSeconds,
+                target: self,
+                selector: #selector(MapViewController.idleTimerExceeded),
+                userInfo: nil,
+                repeats: false
             )
         } else {
             // extend the timer if ui event happened before idle timeout reset
@@ -156,20 +165,60 @@ class MapViewController: UIViewController {
             return super.next
         }
     }
+    
+    func getArea(for location: CLLocationCoordinate2D, completion: @escaping(CycleServiceArea?) -> () ){
+        getLocality(for: location) { locality in
+            var resolvedArea: CycleServiceArea?
+            if
+                let locality = locality,
+                let area = CycleServiceArea.withLabel(locality)
+            {
+                resolvedArea = area
+            }
+            completion(resolvedArea)
+        }
+    }
+
+    
+    func getLocality(for location: CLLocationCoordinate2D, completion: @escaping (String?) -> ()) {
+        let geocoder = GMSGeocoder()
+        
+        geocoder.reverseGeocodeCoordinate(location) { response, error in
+            guard error == nil else { return completion("") }
+            var resolvedLocality = ""
+            if
+                let address = response?.firstResult(),
+                let locality = address.locality
+            {
+                resolvedLocality = locality
+            }
+            completion(resolvedLocality)
+        }
+    }
 }
 
 // MARK: - CLLocationManagerDelegate
 extension MapViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // identify user's initial position and set camera
-        if let coordinate: CLLocationCoordinate2D = manager.location?.coordinate {
-            let geocoder = GMSGeocoder()
-            geocoder.reverseGeocodeCoordinate(coordinate) { response , error in
+        if let location: CLLocationCoordinate2D = manager.location?.coordinate {
+            // update camera
+            if let mapView = self.mapView {
+                let currentPosition = GMSCameraPosition.camera(
+                    withLatitude: location.latitude,
+                    longitude: location.longitude,
+                    zoom: 16
+                )
+                mapView.camera = currentPosition
+            }
+            
+            getArea(for: location) { area in
                 if
-                    let address = response?.firstResult(),
-                    let locality = address.locality
+                    let area = area,
+                    self.currentArea != area
                 {
-                    print(locality)
+                    self.currentArea = area
+                    self.presenter?.getCyclePorts(for: area)
                 }
             }
         }
@@ -183,10 +232,23 @@ extension MapViewController: CLLocationManagerDelegate {
 // MARK: - GMSMapViewDelegate
 extension MapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        let cyclePort = marker.userData as! CyclePort
+        guard let cyclePort = marker.userData as? CyclePort else {
+            fatalError("No userData for cycleport marker")
+        }
+        
         guard let cyclePortVC = self.cyclePortViewController else {
             fatalError("Could not access cyclePortViewController")
         }
+        
+        if selectedMarker != nil {
+            selectedMarker?.deselect()
+        }
+        
+        if let markerView = marker.iconView as? CyclePortMarkerView {
+            markerView.select()
+            selectedMarker = markerView
+        }
+        
         cyclePortVC.show(cyclePort: cyclePort)
         return true
     }
@@ -195,24 +257,19 @@ extension MapViewController: GMSMapViewDelegate {
         guard let cyclePortVC = self.cyclePortViewController else {
             fatalError("Could not access cyclePortViewController")
         }
+        
         cyclePortVC.hide()
     }
 
     func mapView(_ mapView: GMSMapView, idleAt cameraPosition: GMSCameraPosition) {
         // update cycle ports if camera has moved to a new area
-        let geocoder = GMSGeocoder()
-        geocoder.reverseGeocodeCoordinate(cameraPosition.target) { response, error in
-            guard error == nil else { return }
-            
+        getArea(for: cameraPosition.target) { area in
             if
-                let address = response?.firstResult(),
-                let locality = address.locality,
-                let area = CycleServiceArea.withLabel(locality)
+                let area = area,
+                self.currentArea != area
             {
-                if self.currentArea != area {
-                    self.currentArea = area
-                    self.presenter?.getCyclePorts(for: area)
-                }
+                self.currentArea = area
+                self.presenter?.getCyclePorts(for: area)
             }
         }
     }
@@ -240,11 +297,13 @@ extension MapViewController: MapDelegate {
         let lon: Double = Double(cyclePort.parkingLon)!
         let marker = GMSMarker()
         let markerView = CyclePortMarkerView(cycleCount: cyclePort.cycleCount)
+        
         marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         marker.iconView = markerView
         marker.title = ""
         marker.snippet = ""
         marker.userData = cyclePort
+        
         return marker
     }
 
@@ -263,9 +322,8 @@ extension MapViewController: MapDelegate {
     }
 
     func didCancelRental() {
-        // TODO: it's a little bit difficult to follow how this cancel is called
-        // from rental detail -> map -> presenter -> here
-        // Consider refactor
+        // TODO: difficult to follow how didCancelRental is called from
+        // rental detail -> map -> presenter -> here. Consider refactor
         self.rentalDetailViewController?.hide()
     }
 }

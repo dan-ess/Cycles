@@ -55,7 +55,7 @@ class CycleTableViewCell: UITableViewCell {
         
         rentButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         rentButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        rentButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 5).isActive = true
+        rentButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         rentButton.addTarget(self, action: #selector(CycleTableViewCell.didTapRent), for: .touchUpInside)
     }
     
