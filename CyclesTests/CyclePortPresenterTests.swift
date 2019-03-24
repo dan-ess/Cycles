@@ -41,7 +41,8 @@ class CyclePortPresenterTests: XCTestCase {
         let presenter = CyclePortPresenter(
             delegate: controller,
             userManager: userManager,
-            apiProvider: stubbedProvider()
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
         )
         
         // when
@@ -60,7 +61,8 @@ class CyclePortPresenterTests: XCTestCase {
         let presenter = CyclePortPresenter(
             delegate: controller,
             userManager: userManager,
-            apiProvider: stubbedProvider()
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
         )
         
         // when
@@ -92,7 +94,8 @@ class CyclePortPresenterTests: XCTestCase {
         let presenter = CyclePortPresenter(
             delegate: controller,
             userManager: userManager,
-            apiProvider: stubbedProvider()
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
         )
         
         // when

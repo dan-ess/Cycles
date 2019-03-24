@@ -28,7 +28,8 @@ class MapPresenterTests: XCTestCase {
         let presenter = MapPresenter(
             delegate: controller,
             userManager: userManager,
-            apiProvider: stubbedProvider()
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
         )
         XCTAssertNil(controller.cyclePorts)
         
@@ -58,7 +59,8 @@ class MapPresenterTests: XCTestCase {
         let presenter = MapPresenter(
             delegate: controller,
             userManager: userManager,
-            apiProvider: stubbedProvider()
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
         )
         XCTAssertNil(controller.cyclePorts)
         
@@ -69,7 +71,6 @@ class MapPresenterTests: XCTestCase {
         XCTAssertTrue(controller.didCancelRentalCalled)
     }
 }
-
 
 class MapViewControllerMock: MapDelegate {
     var didCancelRentalCalled = false
