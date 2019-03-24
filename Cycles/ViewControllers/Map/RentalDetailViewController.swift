@@ -83,7 +83,7 @@ class RentalDetailViewController: UIViewController {
         
         header.addSubview(successLabel)
         header.addSubview(expirationLabel)
-        header.addConstraints(format: "H:|-12-[v0]-[v1(80)]-15-|", views: successLabel, expirationLabel)
+        header.addConstraints(format: "H:|-12-[v0]-[v1(90)]-15-|", views: successLabel, expirationLabel)
         header.addConstraints(format: "V:|[v0]", views: successLabel)
         header.addConstraints(format: "V:|[v0(24)]", views: expirationLabel)
         

@@ -8,6 +8,7 @@ import Moya
 protocol MapDelegate: class {
     func didUpdateCyclePorts(cyclePorts: [CyclePort])
     func didCancelRental()
+    func didUpdateRentalStatus(status: RentalStatus)
 }
 
 class MapPresenter {
@@ -37,6 +38,27 @@ class MapPresenter {
                 success: { [weak self] items in
                     guard let strongSelf = self else { return }
                     strongSelf.delegate.didUpdateCyclePorts(cyclePorts: items)
+                },
+                error: { code, error in print("error!") },
+                failure: { error in print("failure!") },
+                complete: {}
+            )
+        }
+    }
+    
+    func getRentalStatus() {
+        if let user = userManager.currentUser {
+            apiProvider.getRentalStatus(
+                username: user.username,
+                sessionID: user.sessionID,
+                success: { [weak self] status in
+                    guard let strongSelf = self else { return }
+                    guard let s = status.first else {
+                        print("Error parsing rental status!")
+                        return
+                    }
+                    
+                    strongSelf.delegate.didUpdateRentalStatus(status: s)
                 },
                 error: { code, error in print("error!") },
                 failure: { error in print("failure!") },

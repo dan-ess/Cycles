@@ -62,6 +62,26 @@ class MapViewController: UIViewController {
         resetIdleTimer()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        guard
+            let cyclePortVC = self.cyclePortViewController,
+            let rentalDetailVC = self.rentalDetailViewController
+            else {
+                fatalError("Could not add controllers to MapViewController")
+        }
+        
+        addPullUpController(cyclePortVC, animated: true)
+        addDetailController(rentalDetailVC)
+        
+        if
+            let rental = rentalCache.load(forKey: Caches.rental.rawValue),
+            let rentalDetailViewController = self.rentalDetailViewController
+        {
+            rentalDetailViewController.rental = rental
+            rentalDetailViewController.show(animation: false)
+        }
+    }
+    
     func setupViews() {
         let cyclePortVC = CyclePortViewController(
             userManager: userManager,
@@ -99,7 +119,6 @@ class MapViewController: UIViewController {
         // try to set camera to user's current location
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestLocation()
 
         let authorizationStatus = CLLocationManager.authorizationStatus()
         if (authorizationStatus == CLAuthorizationStatus.notDetermined) {
@@ -114,27 +133,7 @@ class MapViewController: UIViewController {
     @objc private func logoutUser(_ sender: UIButton) {
         AppDelegate.shared.rootViewController.switchToLoginScreen()
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        guard
-            let cyclePortVC = self.cyclePortViewController,
-            let rentalDetailVC = self.rentalDetailViewController
-        else {
-            fatalError("Could not add controllers to MapViewController")
-        }
-
-        addPullUpController(cyclePortVC, animated: true)
-        addDetailController(rentalDetailVC)
-        
-        if
-            let rental = rentalCache.load(forKey: Caches.rental.rawValue),
-            let rentalDetailViewController = self.rentalDetailViewController
-        {
-            rentalDetailViewController.rental = rental
-            rentalDetailViewController.show(animation: false)
-        }
-    }
-
+    
     private func resetIdleTimer() {
         if idleTimer == nil {
             idleTimer = Timer.scheduledTimer(
@@ -151,9 +150,14 @@ class MapViewController: UIViewController {
             }
         }
     }
-
+    
     @objc private func idleTimerExceeded() {
         presenter?.getCyclePorts(for: currentArea)
+        
+        if let rental = rentalCache.load(forKey: Caches.rental.rawValue) {
+            presenter?.getRentalStatus()
+        }
+        
         idleTimer?.invalidate()
         idleTimer = nil
         resetIdleTimer()
@@ -178,7 +182,6 @@ class MapViewController: UIViewController {
             completion(resolvedArea)
         }
     }
-
     
     func getLocality(for location: CLLocationCoordinate2D, completion: @escaping (String?) -> ()) {
         let geocoder = GMSGeocoder()
@@ -325,5 +328,13 @@ extension MapViewController: MapDelegate {
         // TODO: difficult to follow how didCancelRental is called from
         // rental detail -> map -> presenter -> here. Consider refactor
         self.rentalDetailViewController?.hide()
+    }
+    
+    func didUpdateRentalStatus(status: RentalStatus) {
+        // hide rental popup if rental no longer exists
+        if status == .NoRental {
+            rentalCache.clear(forKey: Caches.rental.rawValue)
+            self.rentalDetailViewController?.hide()
+        }
     }
 }

@@ -177,7 +177,6 @@ class CyclePortViewController: PullUpController {
             guard let strongSelf = self else { return }
             strongSelf.spinner.isHidden = true
         }
-
     }
 
     func hide() {

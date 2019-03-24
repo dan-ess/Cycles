@@ -10,6 +10,7 @@ public typealias ParameterDict = [String: Any?]
 
 enum CycleService {
     case login(username: String, password: String)
+    case status(username: String, sessionID: String)
     case cyclePorts(username: String, sessionID: String, area: CycleServiceArea)
     case cycles(username: String, sessionID: String, cyclePort: CyclePort)
     case rent(username: String, sessionID: String, cycle: Cycle)
@@ -29,14 +30,14 @@ extension CycleService: TargetType {
     
     var path: String {
         switch self {
-        case .login, .cyclePorts, .cycles, .rent, .cancelRental:
+        case .login, .status, .cyclePorts, .cycles, .rent, .cancelRental:
             return ""
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .login, .cyclePorts, .cycles, .rent, .cancelRental:
+        case .login, .status, .cyclePorts, .cycles, .rent, .cancelRental:
             return .post
         }
     }
@@ -53,6 +54,11 @@ extension CycleService: TargetType {
             parameters["EventNo"] = "21401"
             parameters["MemberID"] = username
             parameters["Password"] = password
+        case .status(let username, let sessionID):
+            parameters["EventNo"] = "2"
+            parameters["SessionID"] = sessionID
+            parameters["UserID"] = "TYO"
+            parameters["MemberID"] = username
         case .cyclePorts(let username, let sessionID, let area):
             parameters["EventNo"] = "25706"
             parameters["SessionID"] = sessionID
@@ -114,7 +120,7 @@ extension CycleService: TargetType {
     
     var task: Task {
         switch self {
-        case .login, .cyclePorts, .cycles, .rent, .cancelRental:
+        case .login, .status, .cyclePorts, .cycles, .rent, .cancelRental:
             let encodedBody = parameters.urlEncodedString()
             let data = Data(encodedBody.utf8)
             return .requestData(data)
@@ -126,6 +132,164 @@ extension CycleService: TargetType {
         case .login("baduser", "badpass"):
             return """
             """.data(using: String.Encoding.shiftJIS)!
+        case .status(_, _):
+            return """
+            <!DOCTYPE html>
+            <html lang=\"ja\">
+            <head>
+            <meta charset=\"UTF-8\">
+            <meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\">
+            <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">
+            <meta name=\"description\" content=\"\">
+            <meta name=\"keywords\" content=\"\">
+            <meta name=\"robots\" content=\"index,follow\">
+            <meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0\">
+            <meta name=\"format-detection\" content=\"telephone=no\">
+            <link rel=\"stylesheet\" type=\"text/css\" href=\"./css/jquery.mobile.structure-1.4.5.min.css\">
+            <link rel=\"stylesheet\" type=\"text/css\" href=\"./css/import_sp_tab_pc.css\">
+            <title>自転車シェアリング広域実験</title>
+            <script>
+            </script>
+            </head>
+            <body id=\"wrapper_jqm\" class=\"data-role-none ui-mobile-viewport ui-overlay-a\">
+            <div data-role=\"page\" data-url=\"/cycle/TYO/cs_web_main.php\" tabindex=\"0\" class=\"ui-page ui-page-theme-a ui-page-active\" style=\"min-height: 896px;\">
+            <header>
+            <div class=\"hdr clearfix\">
+            <img class=\"hdr_logo_l\" src=\"./img/hdr_logo01.png\">
+            </div>
+            </header>
+            <div class=\"main\">
+            <div class=\"tittle\">
+            <div class=\"main_inner_wide_tittle\">
+            <h1 class=\"tittle_h1\">マイページ/My page</h1>
+            </div>
+            </div>
+            <div class=\"main_inner_wide\">
+            <div class=\"user_inf sp_view\">
+            B.中央/Chuo
+            <br>
+            ようこそ username さん
+            <br>
+            Welcome User ID：userID
+            <br>
+            前回のログイン日時/The last login date ：2019/01/01 00:00:00
+            </div>
+            <div class=\"user_inf pc_view\">
+            B.中央/Chuo
+            <br>
+            ようこそ username さん
+            /Welcome User ID：userID
+            <br>
+            前回のログイン日時/The last login date ：2019/01/01 00:00:00
+            </div>
+            <hr class=\"m0\">
+            <div class=\"mpt_inner_box_usr_stat\">
+            <div class=\"mpt_inner_left\">
+            <p class=\"usr_stat\">
+            利用予約中/Reserved:TYO0000
+            <br>開錠用パスコード/Passcode for use:<font color=\"red\">1111</font>
+            </p>
+            </div>
+            <div class=\"mpt_inner_right\">
+            <div class=\"pc_view\"><br></div>
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21609\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <input type=\"submit\" value=\"予約取消/CANCEL RESERVATION\" class=\"button_submit prevaction  ws-normal m0_tab\">
+            </form>
+            </div>
+            </div>
+            <div class=\"sp_view\">
+            <h2 class=\"cpt_h2\">各種情報/Various information</h2>
+            <div class=\"mpt_inner\">
+            <img class=\"mpt_logo\" src=\"./img/mpt_logo3.gif\">
+            <h3 class=\"mpt_h3\">ご利用明細 / Usage details</h3>
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\" name=\"billing_amount_sp\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21605\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <input type=\"hidden\" name=\"StartYear\" value=\"2019\">
+            <input type=\"hidden\" name=\"StartMonth\" value=\"03\">
+            <div>
+            <a id=\"sp_bill\" class=\"mpt_btn ui-btn ui-icon-redcarat ui-btn-icon-right ui-nodisc-icon\" href=\"javascript:doubleDisableAnchorSp(); billing_amount_sp.submit();\">請求予定額/Billing</a>
+            </div>
+            </form>
+            </div>
+            <h2 class=\"cpt_h2\">会員情報/Membership information</h2>
+            <div class=\"mpt_inner\">
+            <img class=\"mpt_logo\" src=\"./img/mpt_logo4.gif\">
+            <h3 class=\"mpt_h3\">会員情報 / Membership information</h3>
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\" name=\"conf_chg_sp\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21606\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <div>
+            <a class=\"mpt_btn ui-btn ui-icon-redcarat ui-btn-icon-right ui-nodisc-icon\" href=\"javascript:conf_chg_sp.submit();\">設定・変更/Correction</a>
+            </div>
+            </form>
+            </div>
+            </div>
+            <div class=\"pc_view\">
+            <div class=\"mpt_inner_box\">
+            <div class=\"mpt_inner_left\">
+            <h2 class=\"cpt_h2\">各種情報/Various information</h2>
+            <div class=\"mpt_inner\">
+            <h3 class=\"mpt_h3\">ご利用明細：Usage details</h3>
+            <img class=\"mpt_logo\" src=\"./img/mpt_logo3.gif\">
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\" name=\"billing_amount_tab\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21605\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <input type=\"hidden\" name=\"StartYear\" value=\"2019\">
+            <input type=\"hidden\" name=\"StartMonth\" value=\"01\">
+            <div>
+            <a id=\"pc_bill\" class=\"mpt_btn ui-btn ui-icon-redcarat ui-btn-icon-right ui-nodisc-icon\" href=\"javascript:doubleDisableAnchorPc(); billing_amount_tab.submit();\">請求予定額/Billing</a>
+            </div>
+            </form>
+            </div>
+            </div>
+            <div class=\"mpt_inner_right\">
+            <h2 class=\"cpt_h2\">会員情報/Membership information</h2>
+            <div class=\"mpt_inner\">
+            <h3 class=\"mpt_h3\">会員情報：Membership information</h3>
+            <img class=\"mpt_logo\" src=\"./img/mpt_logo4.gif\">
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\" name=\"conf_chg_tab\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21606\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <div>
+            <a class=\"mpt_btn ui-btn ui-icon-redcarat ui-btn-icon-right ui-nodisc-icon\" href=\"javascript:conf_chg_tab.submit();\">設定・変更/Correction</a>
+            </div>
+            </form>
+            </div>
+            </div>
+            </div>
+            </div>
+            <div class=\"mpt_inner_box\">
+            <div class=\"mpt_inner_logout\">
+            <form method=\"POST\" action=\"/cycle/TYO/cs_web_main.php\">
+            <input type=\"hidden\" name=\"EventNo\" value=\"21607\">
+            <input type=\"hidden\" name=\"SessionID\" value=\"TYOuserIDsessionID1111\">
+            <input type=\"hidden\" name=\"UserID\" value=\"TYO\">
+            <input type=\"hidden\" name=\"MemberID\" value=\"userID\">
+            <input type=\"hidden\" name=\"MemAreaID\" value=\"2\">
+            <input type=\"submit\" value=\"ログアウトする/LOG OUT\" class=\"button_submit prevaction\">
+            </form>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </body>
+            </html>
+            """.data(using: String.Encoding.shiftJIS)!
+
         case .login(_, _):
             return """
                 <!DOCTYPE html>

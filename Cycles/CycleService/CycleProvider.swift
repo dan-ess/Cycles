@@ -77,12 +77,14 @@ extension MoyaProvider where Target == CycleService {
         complete completeCallback: (() -> Void)?
     ) {
         let endpoint = CycleService.cyclePorts(username: username, sessionID: sessionID, area: area)
-        self._request(for: endpoint,
-                      atPath: ".sp_view form",
-                      success: successCallback,
-                      error: errorCallback,
-                      failure: failureCallback,
-                      complete: completeCallback)
+        self._request(
+            for: endpoint,
+            atPath: ".sp_view form",
+            success: successCallback,
+            error: errorCallback,
+            failure: failureCallback,
+            complete: completeCallback
+        )
     }
     
     func getCycles(
@@ -95,12 +97,33 @@ extension MoyaProvider where Target == CycleService {
         complete completeCallback: (() -> Void)?
     ) {
         let endpoint = CycleService.cycles(username: username, sessionID: sessionID, cyclePort: cyclePort)
-        self._request(for: endpoint,
-                      atPath: ".sp_view form",
-                      success: successCallback,
-                      error: errorCallback,
-                      failure: failureCallback,
-                      complete: completeCallback)
+        self._request(
+            for: endpoint,
+            atPath: ".sp_view form",
+            success: successCallback,
+            error: errorCallback,
+            failure: failureCallback,
+            complete: completeCallback
+        )
+    }
+    
+    func getRentalStatus(
+        username: String,
+        sessionID: String,
+        success successCallback: @escaping ([RentalStatus]) -> Void,
+        error errorCallback: ((_ statusCode: Int, _ error: Swift.Error) -> Void)?,
+        failure failureCallback: ((MoyaError) -> Void)?,
+        complete completeCallback: (() -> Void)?
+    ) {
+        let endpoint = CycleService.status(username: username, sessionID: sessionID)
+        self._request(
+            for: endpoint,
+            atPath: ".main",
+            success: successCallback,
+            error: errorCallback,
+            failure: failureCallback,
+            complete: completeCallback
+        )
     }
     
     // TODO: in mapHTML support both single item and array return values (Rental instead of [Rental])
@@ -120,7 +143,8 @@ extension MoyaProvider where Target == CycleService {
             success: successCallback,
             error: errorCallback,
             failure: failureCallback,
-            complete: completeCallback)
+            complete: completeCallback
+        )
     }
     
     func cancel(

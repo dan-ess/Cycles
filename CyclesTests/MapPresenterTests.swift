@@ -70,12 +70,36 @@ class MapPresenterTests: XCTestCase {
         // then
         XCTAssertTrue(controller.didCancelRentalCalled)
     }
+    
+    func testRentalStatusShouldReturnReserved() {
+        // given
+        let controller = MapViewControllerMock()
+        let userManager = UserManagerMock(
+            user: User(username: "okuser", password: "okuser", sessionID: "ok")
+        )
+        let presenter = MapPresenter(
+            delegate: controller,
+            userManager: userManager,
+            apiProvider: stubbedProvider(),
+            rentalCache: RentalCache()
+        )
+        
+        // when
+        presenter.getRentalStatus()
+        
+        // then
+        XCTAssertTrue(controller.didUpdateRentalStatusCalled)
+        let status = controller.rentalStatus!
+        XCTAssertEqual(status, RentalStatus.Reserved)
+    }
 }
 
 class MapViewControllerMock: MapDelegate {
     var didCancelRentalCalled = false
     var didUpdateCyclePortsCalled = false
+    var didUpdateRentalStatusCalled = false
     var cyclePorts: [CyclePort]? = nil
+    var rentalStatus: RentalStatus? = nil
     
     func didUpdateCyclePorts(cyclePorts: [CyclePort]) {
         self.cyclePorts = cyclePorts
@@ -83,5 +107,10 @@ class MapViewControllerMock: MapDelegate {
     
     func didCancelRental() {
         didCancelRentalCalled = true
+    }
+    
+    func didUpdateRentalStatus(status: RentalStatus) {
+        self.didUpdateRentalStatusCalled = true
+        self.rentalStatus = status
     }
 }

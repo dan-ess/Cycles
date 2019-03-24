@@ -32,6 +32,7 @@
 		375480A42233AA2A0078B9AE /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375480A32233AA2A0078B9AE /* Helpers.swift */; };
 		375480A62233B3120078B9AE /* MapPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375480A52233B3120078B9AE /* MapPresenterTests.swift */; };
 		375480A82233CC480078B9AE /* CyclePortPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375480A72233CC480078B9AE /* CyclePortPresenterTests.swift */; };
+		37658FCA2247572A009CEFEC /* RentalStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37658FC92247572A009CEFEC /* RentalStatus.swift */; };
 		37700FC02205A52F001AA685 /* CycleServiceArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37700FBF2205A52F001AA685 /* CycleServiceArea.swift */; };
 		37700FC32205DA5D001AA685 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37700FC22205DA5D001AA685 /* User.swift */; };
 		37700FCA2205F9CF001AA685 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37700FC92205F9CF001AA685 /* Environment.swift */; };
@@ -136,6 +137,7 @@
 		375480A32233AA2A0078B9AE /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		375480A52233B3120078B9AE /* MapPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPresenterTests.swift; sourceTree = "<group>"; };
 		375480A72233CC480078B9AE /* CyclePortPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyclePortPresenterTests.swift; sourceTree = "<group>"; };
+		37658FC92247572A009CEFEC /* RentalStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RentalStatus.swift; sourceTree = "<group>"; };
 		37700FBF2205A52F001AA685 /* CycleServiceArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CycleServiceArea.swift; sourceTree = "<group>"; };
 		37700FC22205DA5D001AA685 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		37700FC72205F8A4001AA685 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				37700FF42206B31B001AA685 /* Errors.swift */,
 				3746718A21DD1EA100CFF20E /* Login.swift */,
 				37FFF07E2122C43800F30D26 /* Rental.swift */,
+				37658FC92247572A009CEFEC /* RentalStatus.swift */,
 				37700FF02206B1ED001AA685 /* Response+CycleService.swift */,
 			);
 			path = CycleService;
@@ -552,6 +555,7 @@
 				372C92DA220F02B500173814 /* UIColor+Cycles.swift in Sources */,
 				37FFF07F2122C43800F30D26 /* Rental.swift in Sources */,
 				37700FF32206B22F001AA685 /* Dictionary+CycleService.swift in Sources */,
+				37658FCA2247572A009CEFEC /* RentalStatus.swift in Sources */,
 				37700FF52206B31B001AA685 /* Errors.swift in Sources */,
 				37E680E9211742A30071A841 /* Cycle.swift in Sources */,
 				3746718B21DD1EA100CFF20E /* Login.swift in Sources */,
@@ -754,6 +758,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = VX425QC7ZA;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
@@ -776,6 +781,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = VX425QC7ZA;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
