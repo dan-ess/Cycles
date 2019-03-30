@@ -14,6 +14,7 @@ class MapViewController: UIViewController {
     private var currentArea = CycleServiceArea.中央区
     private var cyclePortViewController: CyclePortViewController?
     private var idleTimer: Timer?
+    // TODO: update this from user defaults
     private var initialLat = 35.688038
     private var initialLon = 139.786561
     private var locationManager = CLLocationManager()

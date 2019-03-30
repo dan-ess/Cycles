@@ -9,7 +9,7 @@ import Kanna
 enum RentalStatus: Int, Mappable {
     case NoRental = 1
     case Reserved = 2
-    case Rented = 3
+    case InUse = 3
     
     static func create(from element: XMLElement, extra: ParameterDict?) -> RentalStatus {
         if
@@ -18,6 +18,8 @@ enum RentalStatus: Int, Mappable {
         {
             if statsText.contains("Reserved") {
                 return RentalStatus.Reserved
+            } else if statsText.contains("In use") {
+                return RentalStatus.InUse
             }
         }
         return RentalStatus.NoRental
