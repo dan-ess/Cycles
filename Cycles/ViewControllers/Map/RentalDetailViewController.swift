@@ -107,6 +107,23 @@ class RentalDetailViewController: UIViewController {
         
         view.addConstraints(format: "V:|-12-[v0(26)][v1(24)][v2(24)]", views: header, body1, body2)
         
+        let shadowLayer = CAShapeLayer()
+        shadowLayer.path = UIBezierPath(
+            roundedRect: CGRect(x: 0, y: 0, width: view.bounds.width, height: 100),
+            byRoundingCorners: [.bottomLeft, .bottomRight],
+            cornerRadii: CGSize(width: 10, height: 10)
+        ).cgPath
+        shadowLayer.fillColor = UIColor.white.cgColor
+        shadowLayer.shadowColor = UIColor.black.cgColor
+        shadowLayer.shadowPath = shadowLayer.path
+        shadowLayer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        shadowLayer.shadowOpacity = 0.2
+        shadowLayer.shadowRadius = 3
+        
+        view.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        view.layer.cornerRadius = 10.0
+        view.layer.insertSublayer(shadowLayer, at: 0)
+        
         cancelButton.addTarget(self, action: #selector(RentalDetailViewController.didTapCancel), for: .touchUpInside)
     }
     

@@ -16,6 +16,58 @@ class CyclePortViewController: PullUpController {
     var cyclePort: CyclePort?
     weak var delegate: RentalDelegate?
     private var presenter: CyclePortPresenter?
+    
+    private let cyclePortImage: UIImageView  = {
+        var imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+    
+    private let titleLabel: UILabel = {
+        var label = UILabel()
+        label.text = "CyclePort"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let countLabel: UILabel = {
+        var label = UILabel()
+        label.text = ""
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 15.0)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let cyclePortContainer: UIView = {
+        var view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 20))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let cycleTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
+    
+    private let spinner: UIView = {
+        let view = UIView()
+        
+        let spinner = UIActivityIndicatorView(style: .whiteLarge)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        spinner.color = .lightGray
+        
+        view.addSubview(spinner)
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        view.backgroundColor = .white
+        view.isHidden = true
+        return view
+    }()
 
     init(
         userManager: UserManagerProtocol,
@@ -37,7 +89,7 @@ class CyclePortViewController: PullUpController {
 
     // MARK: - UI Controls
     private let handleView: UIView = {
-        var handle = UIView(frame: CGRect(x: 0, y:0, width: UIScreen.main.bounds.width / 10, height: 10))
+        var handle = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width / 10, height: 10))
         handle.translatesAutoresizingMaskIntoConstraints = false
 
         var bar = CAShapeLayer()
@@ -46,8 +98,8 @@ class CyclePortViewController: PullUpController {
         bar.lineCap = CAShapeLayerLineCap.round
         bar.lineWidth = 4
 
-        let startPoint = CGPoint(x: -1 * Int(UIScreen.main.bounds.width / 25), y: 0)
-        let endPoint = CGPoint(x: Int(UIScreen.main.bounds.width / 25), y: 0)
+        let startPoint = CGPoint(x: -10, y: 0)
+        let endPoint = CGPoint(x: 10, y: 0)
         let path = UIBezierPath()
         path.move(to: startPoint)
         path.addLine(to: endPoint)
@@ -57,60 +109,7 @@ class CyclePortViewController: PullUpController {
         handle.layer.addSublayer(bar)
         return handle
     }()
-
-    private let cyclePortImage: UIImageView  = {
-        var imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.masksToBounds = true
-        return imageView
-    }()
-
-    private let titleLabel: UILabel = {
-        var label = UILabel()
-        label.text = "CyclePort"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let countLabel: UILabel = {
-        var label = UILabel()
-        label.text = ""
-        label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 15.0)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let cyclePortContainer: UIView = {
-        var view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 20))
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
- 
-    private let cycleTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
-    }()
-
-    private let spinner: UIView = {
-        let view = UIView()
-        
-        let spinner = UIActivityIndicatorView(style: .whiteLarge)
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.startAnimating()
-        spinner.color = .lightGray
-        
-        view.addSubview(spinner)
-        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        view.backgroundColor = .white
-        view.isHidden = true
-        return view
-    }()
-
-
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -120,7 +119,7 @@ class CyclePortViewController: PullUpController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-
+    
     private func setupViews() {
         view.backgroundColor = .white
 
@@ -132,7 +131,7 @@ class CyclePortViewController: PullUpController {
         view.addSubview(handleView)
         view.addSubview(cyclePortContainer)
         view.addSubview(cycleTableView)
-
+        
         view.addConstraints(format: "V:|-10-[v0]", views: handleView)
         handleView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
@@ -159,6 +158,18 @@ class CyclePortViewController: PullUpController {
         cycleTableView.topAnchor.constraint(equalTo: cyclePortImage.bottomAnchor, constant: 20).isActive = true
         view.addConstraints(format: "H:|-5-[v0]-20-|", views: cycleTableView)
         view.addConstraints(format: "V:[v0]|", views: cycleTableView)
+        
+        let shadowLayer = CAShapeLayer()
+        shadowLayer.path = UIBezierPath(roundedRect: view.bounds, cornerRadius: 10.0).cgPath
+        shadowLayer.fillColor = UIColor.white.cgColor
+        shadowLayer.shadowColor = UIColor.black.cgColor
+        shadowLayer.shadowPath = shadowLayer.path
+        shadowLayer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        shadowLayer.shadowOpacity = 0.2
+        shadowLayer.shadowRadius = 3
+        
+        view.layer.cornerRadius = 10.0
+        view.layer.insertSublayer(shadowLayer, at: 0)
     }
 
     // MARK: - UI Behaviour
