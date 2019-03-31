@@ -35,7 +35,7 @@ class CyclePortViewController: PullUpController {
     private let countLabel: UILabel = {
         var label = UILabel()
         label.text = ""
-        label.textColor = .lightGray
+        label.textColor = .darkGray
         label.font = UIFont.systemFont(ofSize: 15.0)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -51,6 +51,13 @@ class CyclePortViewController: PullUpController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
+    }()
+    
+    private let cycleImageView: UIImageView = {
+        let image = UIImage(named: "cycle")
+        let imageView = UIImageView(image: image?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = .darkGray
+        return imageView
     }()
     
     private let spinner: UIView = {
@@ -136,6 +143,7 @@ class CyclePortViewController: PullUpController {
         handleView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
         cyclePortContainer.addSubview(cyclePortImage)
+        cyclePortContainer.addSubview(cycleImageView)
         cyclePortContainer.addSubview(titleLabel)
         cyclePortContainer.addSubview(countLabel)
         cyclePortContainer.addSubview(spinner)
@@ -148,10 +156,12 @@ class CyclePortViewController: PullUpController {
 
         cyclePortContainer.addConstraints(format: "V:|-15-[v0]", views: titleLabel)
         cyclePortContainer.addConstraints(format: "H:|-75-[v0]|", views: titleLabel)
-
+        
         countLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5).isActive = true
-        cyclePortContainer.addConstraints(format: "H:|-75-[v0]|", views: countLabel)
-
+        cyclePortContainer.addConstraints(format: "H:|-75-[v0(18)]-5-[v1]|", views: cycleImageView, countLabel)
+        cycleImageView.addConstraints(format: "V:[v0(18)]", views: cycleImageView)
+        cycleImageView.centerYAnchor.constraint(equalTo: countLabel.centerYAnchor).isActive = true
+        
         cyclePortContainer.addConstraints(format: "V:|[v0]|", views: spinner)
         cyclePortContainer.addConstraints(format: "H:|[v0]|", views: spinner)
 

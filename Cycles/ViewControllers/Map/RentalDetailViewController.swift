@@ -60,6 +60,27 @@ class RentalDetailViewController: UIViewController {
         return label
     }()
     
+    private let successImageView: UIImageView = {
+        let image = UIImage(named: "success")
+        let imageView = UIImageView(image: image?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = .darkGray
+        return imageView
+    }()
+    
+    private let markerImageView: UIImageView = {
+        let image = UIImage(named: "marker")
+        let imageView = UIImageView(image: image?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = .darkGray
+        return imageView
+    }()
+    
+    private let cycleImageView: UIImageView = {
+        let image = UIImage(named: "cycle")
+        let imageView = UIImageView(image: image?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = .darkGray
+        return imageView
+    }()
+    
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,31 +102,40 @@ class RentalDetailViewController: UIViewController {
         view.addSubview(header)
         view.addConstraints(format: "H:|[v0]|", views: header)
         
+        header.addSubview(successImageView)
         header.addSubview(successLabel)
         header.addSubview(expirationLabel)
-        header.addConstraints(format: "H:|-12-[v0]-[v1(90)]-15-|", views: successLabel, expirationLabel)
+        header.addConstraints(format: "H:|-12-[v0(25)]-[v1]-[v2(90)]-15-|", views: successImageView, successLabel, expirationLabel)
+        header.addConstraints(format: "V:|[v0(25)]", views: successImageView)
         header.addConstraints(format: "V:|[v0]", views: successLabel)
         header.addConstraints(format: "V:|[v0(24)]", views: expirationLabel)
+        successImageView.centerYAnchor.constraint(equalTo: successLabel.centerYAnchor).isActive = true
         
         let body1 = UIView()
         view.addSubview(body1)
         view.addConstraints(format: "H:|[v0]|", views: body1)
         
+        body1.addSubview(markerImageView)
         body1.addSubview(cyclePortLabel)
-        body1.addConstraints(format: "H:|-15-[v0]-|", views: cyclePortLabel)
+        body1.addConstraints(format: "H:|-16-[v0(18)]-[v1]-|", views: markerImageView, cyclePortLabel)
+        body1.addConstraints(format: "V:[v0(18)]", views: markerImageView)
         body1.addConstraints(format: "V:|[v0]|", views: cyclePortLabel)
+        markerImageView.centerYAnchor.constraint(equalTo: cyclePortLabel.centerYAnchor).isActive = true
         
         let body2 = UIView()
         view.addSubview(body2)
         view.addConstraints(format: "H:|[v0]|", views: body2)
         
+        body2.addSubview(cycleImageView)
         body2.addSubview(cycleLabel)
         body2.addSubview(cancelButton)
-        body2.addConstraints(format: "H:|-15-[v0][v1]-15-|", views: cycleLabel, cancelButton)
+        body2.addConstraints(format: "H:|-16-[v0(18)]-[v1][v2]-15-|", views: cycleImageView, cycleLabel, cancelButton)
+        body2.addConstraints(format: "V:[v0(18)]", views: cycleImageView)
         body2.addConstraints(format: "V:|[v0]|", views: cycleLabel)
         body2.addConstraints(format: "V:|[v0]|", views: cancelButton)
+        cycleImageView.centerYAnchor.constraint(equalTo: cycleLabel.centerYAnchor).isActive = true
         
-        view.addConstraints(format: "V:|-12-[v0(26)][v1(24)][v2(24)]", views: header, body1, body2)
+        view.addConstraints(format: "V:|-12-[v0(26)]-3-[v1(24)][v2(24)]", views: header, body1, body2)
         
         let shadowLayer = CAShapeLayer()
         shadowLayer.path = UIBezierPath(
