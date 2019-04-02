@@ -44,4 +44,4 @@ gms_api_key = <your_key>
 ```
 
 ## To do
-Make the UI less ghetto
+Make the UI nicer
